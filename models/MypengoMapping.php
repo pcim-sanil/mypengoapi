@@ -5,8 +5,10 @@
  */
 class MypengoMapping extends BaseModel {
 
-    public function __construct() {
+   
+	public function __construct() {
         parent::__construct();
+		
     }
 
     /**
@@ -15,6 +17,10 @@ class MypengoMapping extends BaseModel {
      */
     public function setTableName() {
         return $this->_table = "mypengo_mapping";
+    }
+
+    public function setTableName2() {
+        return $this->_table2 = "sms_services";
     }
 
     /**
@@ -27,5 +33,8 @@ class MypengoMapping extends BaseModel {
         $stmt->execute(array($id));
         return $stmt->fetchAll();
     }
+   
+
+
 
 }

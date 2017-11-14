@@ -5,7 +5,7 @@
  */
 require_once 'config.php';
 require_once 'bootstrap.php';
-
+date_default_timezone_set('Australia/Sydney');
 
 $route = new Router();
 
@@ -22,7 +22,7 @@ $route->register('/', 'GET', function () {
 // fetch all mapping
 $route->register('/getMappings', 'GET', function () {
     $mypengoMappingObj = new MypengoMapping();
-    $mypengoMappings = $mypengoMappingObj->fetchAllByParams(['isactive' => 1]);
+    $mypengoMappings = $mypengoMappingObj->fetchAllByParams(['is_ddi_active' => 1]);
     Response::sendJSON($mypengoMappings);
 });
 
@@ -30,8 +30,18 @@ $route->register('/getMappings', 'GET', function () {
 
 // fetch mapping by ddi
 $route->register('/getMappingByDDI/(\d+)', 'GET', function ($ddi) {
+
     $mypengoMappingObj = new MypengoMapping();
-    $mypengoMapping = $mypengoMappingObj->fetchByParams(['service_ddi' => $ddi, 'isactive' => 1]);
+    $mypengoMapping = $mypengoMappingObj->fetchAllByParams(['geographic_no' => $ddi, 'is_ddi_active' => 1]);
+    Response::sendJSON($mypengoMapping);
+});
+
+
+// fetch mapping by service id (mypengo given only)
+$route->register('/getServiceId/(\d+)', 'GET', function ($ddi) {
+
+	$mypengoMappingObj 	= 	new MypengoMapping();
+    $mypengoMapping 	= 	$mypengoMappingObj->fetchServiceID(['geographic_no' => $ddi, 'is_ddi_active' => 1]);
     Response::sendJSON($mypengoMapping);
 });
 
@@ -40,26 +50,28 @@ $route->register('/getMappingByDDI/(\d+)', 'GET', function ($ddi) {
 // fetch subscription
 $route->register('/getSubscriptions?(.+)', 'GET', function () {
 
-    $serviceId = Utility::getValue($_REQUEST, 'serviceId');
 
-    $requestNumber = Utility::getValue($_REQUEST, 'req_number');
-    $countryPrefix = Utility::getValue($_REQUEST, 'country_prefix');
-    $msisdn = Utility::getMsisdn($requestNumber, $countryPrefix);
-    
+    $serviceId 			= Utility::getValue($_REQUEST, 'serviceId');
+    $custkey 			= Utility::getValue($_REQUEST, 'custkey');
+    $requestNumber 		= Utility::getValue($_REQUEST, 'req_number');
+    $countryPrefix	 	= Utility::getValue($_REQUEST, 'country_prefix');
+    $msisdn 			= Utility::getMsisdn($requestNumber, $countryPrefix);
+   
 
     // make entry log
     $logId = MypengoUnsubStatus::entryLog();
-
+    //echo $logId;
 
     // mypengo actual api call
-    $url = MYPENGO_BASE_URL_SUBSCRIPTION . "?serviceid=$serviceId&msisdn=$msisdn";
-    $response = Utility::apiGetRequest($url);
+   // $url = MYPENGO_BASE_URL_SUBSCRIPTION . "?serviceid=$serviceId&msisdn=$msisdn";
+    $response = Utility::apiGetRequest("url");
 
 
     // update log
-    MypengoUnsubStatus::updateLog($logId, $response);
+   // MypengoUnsubStatus::updateLog($logId, $response);
 
-     Utility::r($response);
+     Utility::r($logId);  
+     // Utility::r($response);
     //exit($response);
 });
 
@@ -70,15 +82,13 @@ $route->register('/unsubscribe?(.+)', 'GET', function () {
 
     // set req_for as unsub
     $_REQUEST['req_for'] = 'unsub';
-
     $serviceId = Utility::getValue($_REQUEST, 'serviceId');
-
     $requestNumber = Utility::getValue($_REQUEST, 'req_number');
     $countryPrefix = Utility::getValue($_REQUEST, 'country_prefix');
     $msisdn = Utility::getMsisdn($requestNumber, $countryPrefix);
 
     // make entry log
-    $logId = MypengoUnsubStatus::entryLog();
+    $logId = MypengoUnsubStatus::entryLogUnsub();
 
 
 
