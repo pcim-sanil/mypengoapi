@@ -10,12 +10,9 @@ define('ENVIRONMENT', 'DEV');
  * Database configuration
  * adjust params based on enviornment
  */
-define('DB_HOST', 'localhost:3307');
-define('DB_PASSWORD', 'abc123');
+define('DB_HOST', '192.168.0.120');
 define('DB_USER', 'developer');
-//define('DB_HOST', 'localhost');
-//define('DB_USER', 'root');
-//define('DB_PASSWORD', '');
+define('DB_PASSWORD', 'abc123');
 define('DB_NAME', '1300_staging');
 define('DB_CHARSET', 'utf8');
 
