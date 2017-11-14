@@ -11,6 +11,7 @@ abstract class BaseModel
      * @var type
      */
     protected $_table;
+    protected $_table2;
 
     /**
      * pdo oject
@@ -32,6 +33,7 @@ abstract class BaseModel
         }
 
         $this->setTableName();
+       // $this->setTableName2();
     }
 
     /**
@@ -43,7 +45,7 @@ abstract class BaseModel
 
         $stmt = $this->pdo->query("SHOW COLUMNS FROM  $this->_table");
         $rows = $stmt->fetchAll();
-        return array_column($rows, 'Field');
+		return array_column($rows, 'Field');	
     }
 
     /**
@@ -70,12 +72,14 @@ abstract class BaseModel
         return $stmt->fetch();
     }
 
+
     /**
      * fetch one row by primary key
      * @param type $id
      * @return type
      */
-    public function fetchByParams($params)
+	 
+	public  function fetchServiceID($params)
     {
 
         $conditions = array();
@@ -92,16 +96,10 @@ abstract class BaseModel
 
         $conditionsString = implode(" AND ", $conditions);
 
-        $stmt = $this->pdo->prepare("SELECT * FROM $this->_table WHERE $conditionsString");
+        $stmt = $this->pdo->prepare("SELECT mm.service_id FROM $this->_table AS mm LEFT JOIN sms_services AS ss  ON mm.sms_service_id=ss.id  WHERE $conditionsString");
         $stmt->execute($values);
-        return $stmt->fetch();
+        return $stmt->fetchAll();
     }
-
-    /**
-     * fetch one row by primary key
-     * @param type $id
-     * @return type
-     */
     public function fetchAllByParams($params)
     {
 
@@ -111,6 +109,7 @@ abstract class BaseModel
         foreach ($params as $key => $value) {
             $conditions[]    = " $key =:$key ";
             $values[":$key"] = $value;
+			
         }
 
         if (empty($conditions) || empty($values)) {
@@ -118,8 +117,7 @@ abstract class BaseModel
         }
 
         $conditionsString = implode(" AND ", $conditions);
-
-        $stmt = $this->pdo->prepare("SELECT * FROM $this->_table WHERE $conditionsString");
+        $stmt = $this->pdo->prepare("SELECT mm.service_id,ss.company_info_id,ss.geographic_no,mm.sms_service_id FROM $this->_table AS mm LEFT JOIN sms_services AS ss  ON mm.sms_service_id=ss.id  WHERE $conditionsString");
         $stmt->execute($values);
         return $stmt->fetchAll();
     }
@@ -131,10 +129,9 @@ abstract class BaseModel
      */
     public function create($data)
     {
-
-        $columns = $this->getColumns();
-
-        // clear unnecessary data
+		$columns = $this->getColumns();
+		// clear unnecessary data
+		
         foreach ($data as $key => $value) {
             if (!in_array($key, $columns)) {
                 unset($data[$key]);
@@ -148,6 +145,7 @@ abstract class BaseModel
         $result = $this->pdo->prepare("INSERT INTO `$this->_table`($fields) VALUES($placeholder)")->execute(array_values($data));
 
         if ($result) {
+           
             return $this->pdo->lastInsertId();
         }
     }
