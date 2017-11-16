@@ -64,47 +64,43 @@ $route->register('/getSubscriptions?(.+)', 'GET', function () {
 
     // mypengo actual api call
    // $url = MYPENGO_BASE_URL_SUBSCRIPTION . "?serviceid=$serviceId&msisdn=$msisdn";
-    $response = Utility::apiGetRequest("url");
 
 
-    // update log
-   // MypengoUnsubStatus::updateLog($logId, $response);
-
-     Utility::r($logId);  
-     // Utility::r($response);
-    //exit($response);
+    // Utility::r($logId);  
+     
+    exit($logId);
 });
 
 
 // unsubscrib from service
 $route->register('/unsubscribe?(.+)', 'GET', function () {
 
+       // set req_for as unsub
+    $_REQUEST['req_for']        =     'unsub';
+    $serviceid                  =     Utility::getValue($_REQUEST, 'serviceid');
+    $requestNumber              =     Utility::getValue($_REQUEST, 'req_number');
+    $countryPrefix              =     Utility::getValue($_REQUEST, 'country_prefix');
+    $msisdn                     =     Utility::getMsisdn($requestNumber, $countryPrefix);
 
-    // set req_for as unsub
-    $_REQUEST['req_for'] = 'unsub';
-    $serviceId = Utility::getValue($_REQUEST, 'serviceId');
-    $requestNumber = Utility::getValue($_REQUEST, 'req_number');
-    $countryPrefix = Utility::getValue($_REQUEST, 'country_prefix');
-    $msisdn = Utility::getMsisdn($requestNumber, $countryPrefix);
 
-    // make entry log
+       // make entry log
     $logId = MypengoUnsubStatus::entryLogUnsub();
 
 
-
-    $postData = json_encode(['msisdn' => $msisdn, "ServiceId" => $serviceId]);
+    $postData = json_encode(['msisdn' => $msisdn, "serviceid" => $serviceid]);
 
     // mypengo actual api call
-    $url = MYPENGO_BASE_URL_UNSUBSCRIBE . "?serviceid=$serviceId&msisdn=$msisdn";
+    $url = MYPENGO_BASE_URL_UNSUBSCRIBE;
     $response = Utility::apiPostRequest($url, $postData);
 
 
     // update log
     MypengoUnsubStatus::updateLog($logId, $response);
 
+
     
-    Utility::r($response);
-    //exit($response);
+//    Utility::r($response);
+    exit($response);
 });
 
 

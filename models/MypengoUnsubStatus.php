@@ -36,14 +36,15 @@ class MypengoUnsubStatus extends BaseModel {
             $reqArray['res_obj']    = '';
             $reqArray['custkey']    = Utility::getValue($_REQUEST, 'custkey',date('Ymd_His'));
             $reqArray['req_number'] = Utility::getValue($_REQUEST, 'req_number');
-            $reqArray['req_source'] = Utility::getValue($_REQUEST, 'req_source', 'Portal1300');
+            $reqArray['req_source'] = Utility::getValue($_REQUEST, 'req_source', 'Portal1300');        
+            $reqArray['serviceid'] = Utility::getValue($_REQUEST, 'serviceid', 'serviceid');
             $reqArray['req_ddi']    = Utility::getValue($_REQUEST, 'req_ddi', '0284482842');
             $reqArray['res_status'] = '1'; // pending
            // $reqArray['created_on']   = date('Y-m-d H:i:s');
             $reqArray['req_for']    = Utility::getValue($_REQUEST, 'req_for', 'unsub');
 
             $mypengoUnsubStatusObj = new MypengoUnsubStatus();
-            echo "<pre>";print_r($reqArray);
+        
                         return $mypengoUnsubStatusObj->create($reqArray);
             
                  
@@ -63,7 +64,7 @@ class MypengoUnsubStatus extends BaseModel {
             
             $reqArray['req_obj']    = json_encode($_REQUEST);
             $reqArray['res_obj']    = '';
-            $reqArray['custkey']    = Utility::getValue($_REQUEST, 'custkey');
+            $reqArray['custkey']    = Utility::getValue($_REQUEST, 'custkey',date('Ymd_His'));
             $reqArray['req_number'] = Utility::getValue($_REQUEST, 'req_number');
             $reqArray['req_source'] = Utility::getValue($_REQUEST, 'req_source', 'Portal1300');
             $reqArray['req_ddi']    = Utility::getValue($_REQUEST, 'req_ddi', '0284482842');
@@ -139,9 +140,17 @@ public static function responseObject4Source($keyRequired,$apiResponse) {
     return $response2Source;
     }
     public static function generatePacket($reqPacket) {
-        $mypengoMappingObj  =   new MypengoMapping();
-                $mypengoMapping     =   $mypengoMappingObj->fetchServiceID(['geographic_no' => '0284482842', 'is_ddi_active' => 1]);
+        
+                $localREsponse      =   array ("err_300" => array("error_message" => "No Record found for DDI ".$reqPacket['req_ddi']));
+                $mypengoMappingObj  =   new MypengoMapping();
+                $ddiToMap           =   "02".substr($reqPacket['req_ddi'],-8);
+               
+                $mypengoMapping     =   $mypengoMappingObj->fetchServiceID(['geographic_no' => $ddiToMap,'is_ddi_active' => 1]);
+                      //$mypengoMapping   =   $mypengoMappingObj->fetchServiceID(['geographic_no' => $ddi, 'is_ddi_active' => 1]);
                 $mypengoUnsubStatusObj = new MypengoUnsubStatus();
+                if (!empty($mypengoMapping)) {
+                $localREsponse=null;
+                
                  $i = 0;
                 foreach ($mypengoMapping as $key => $value) {
                   $logId      =   $mypengoUnsubStatusObj->create($reqPacket);
@@ -160,12 +169,14 @@ public static function responseObject4Source($keyRequired,$apiResponse) {
                        // update log
      //   echo $logId;
         MypengoUnsubStatus::updateLog($logId, $response);
-
+            }
      //Utility::r($response);
-                   
-                }
+            //end if the select result of the ddi is empty
+
+                }else
+                $logId      =   $mypengoUnsubStatusObj->create($reqPacket);
 //               echo "<pre>";print_r($localREsponse);
-               return $localREsponse;
+               return json_encode($localREsponse);
     }
     /**
      *  update log
