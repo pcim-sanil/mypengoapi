@@ -45,9 +45,8 @@ class MypengoUnsubStatus extends BaseModel {
 
             $mypengoUnsubStatusObj = new MypengoUnsubStatus();
         
-                        return $mypengoUnsubStatusObj->create($reqArray);
+            return $mypengoUnsubStatusObj->create($reqArray);
             
-                 
             
         } catch (Exception $exc) {
             if (ENVIRONMENT == 'DEV') {
