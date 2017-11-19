@@ -1,14 +1,12 @@
 <?php
 
 /**
- * route
+ * Mypengo Mapping model
  */
 class MypengoMapping extends BaseModel {
 
-   
-	public function __construct() {
+    public function __construct() {
         parent::__construct();
-		
     }
 
     /**
@@ -19,22 +17,32 @@ class MypengoMapping extends BaseModel {
         return $this->_table = "mypengo_mapping";
     }
 
-    public function setTableName2() {
-        return $this->_table2 = "sms_services";
-    }
-
     /**
-     * fetchr reviews by coffee id
-     * @param type $coffeeId
+     * fetch one row by primary key
+     * @param type $id
      * @return type
      */
-    public function fetchByCoffee($id) {
-        $stmt = $this->pdo->prepare("SELECT * FROM $this->_table WHERE auto_id = ?");
-        $stmt->execute(array($id));
+    public function fetchServiceID($params) {
+
+        $conditions = array();
+        $values = array();
+
+        foreach ($params as $key => $value) {
+            $conditions[] = " $key = :$key ";
+            $values[":$key"] = $value;
+        }
+
+        if (empty($conditions) || empty($values)) {
+            return array();
+        }
+
+        $conditionsString = implode(" AND ", $conditions);
+
+        $stmt = $this->pdo->prepare("SELECT mm.service_id FROM $this->_table AS mm LEFT JOIN sms_services AS ss  ON mm.sms_service_id=ss.id  WHERE $conditionsString");
+
+        $stmt->execute($values);
+
         return $stmt->fetchAll();
     }
-   
-
-
 
 }
