@@ -1,7 +1,8 @@
 RewriteEngine On
 
 # based on project setup following path may vary
-RewriteBase /api/
+#RewriteBase /api/
+RewriteBase /mypengoapi/
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 

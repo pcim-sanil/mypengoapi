@@ -31,50 +31,21 @@ class MypengoUnsubStatus extends BaseModel {
 
         try {
             $reqArray = array();
-           
-            $reqArray['req_obj']    = json_encode($_REQUEST);
-            $reqArray['res_obj']    = '';
-            $reqArray['custkey']    = Utility::getValue($_REQUEST, 'custkey',date('Ymd_His'));
-            $reqArray['req_number'] = Utility::getValue($_REQUEST, 'req_number');
-            $reqArray['req_source'] = Utility::getValue($_REQUEST, 'req_source', 'Portal1300');        
-            $reqArray['serviceid'] = Utility::getValue($_REQUEST, 'serviceid', 'serviceid');
-            $reqArray['req_ddi']    = Utility::getValue($_REQUEST, 'req_ddi', '0284482842');
-            $reqArray['res_status'] = '1'; // pending
-           // $reqArray['created_on']   = date('Y-m-d H:i:s');
-            $reqArray['req_for']    = Utility::getValue($_REQUEST, 'req_for', 'unsub');
 
-            $mypengoUnsubStatusObj = new MypengoUnsubStatus();
-        
-            return $mypengoUnsubStatusObj->create($reqArray);
-            
-            
-        } catch (Exception $exc) {
-            if (ENVIRONMENT == 'DEV') {
-                Utility::r($exc->getTraceAsString());
-            }
-        }
-    }    /**
-     * entry log of request string
-     */
-    public static function entryLog() {
-
-        try {
-            $reqArray = array();
-            
-            $reqArray['req_obj']    = json_encode($_REQUEST);
-            $reqArray['res_obj']    = '';
-            $reqArray['custkey']    = Utility::getValue($_REQUEST, 'custkey',date('Ymd_His'));
+            $reqArray['req_obj'] = json_encode($_REQUEST);
+            $reqArray['res_obj'] = '';
+            $reqArray['custkey'] = Utility::getValue($_REQUEST, 'custkey', date('Ymd_His'));
             $reqArray['req_number'] = Utility::getValue($_REQUEST, 'req_number');
             $reqArray['req_source'] = Utility::getValue($_REQUEST, 'req_source', 'Portal1300');
-            $reqArray['req_ddi']    = Utility::getValue($_REQUEST, 'req_ddi', '0284482842');
+            $reqArray['serviceid'] = Utility::getValue($_REQUEST, 'serviceid', 'serviceid');
+            $reqArray['req_ddi'] = Utility::getValue($_REQUEST, 'req_ddi', '0284482842');
             $reqArray['res_status'] = '1'; // pending
-            $reqArray['req_for']    = Utility::getValue($_REQUEST, 'req_for', 'info');
+            // $reqArray['created_on']   = date('Y-m-d H:i:s');
+            $reqArray['req_for'] = Utility::getValue($_REQUEST, 'req_for', 'unsub');
 
             $mypengoUnsubStatusObj = new MypengoUnsubStatus();
-            return MypengoUnsubStatus::generatePacket($reqArray);
-            
-                 
-            
+
+            return $mypengoUnsubStatusObj->create($reqArray);
         } catch (Exception $exc) {
             if (ENVIRONMENT == 'DEV') {
                 Utility::r($exc->getTraceAsString());
@@ -82,10 +53,46 @@ class MypengoUnsubStatus extends BaseModel {
         }
     }
 
-public static function is_multi_array( $arr ) {
-    rsort( $arr );
-    return isset( $arr[0] ) && is_array( $arr[0] );
-}
+    /**
+     * entry log of request string
+     */
+    public static function entryLog() {
+
+        try {
+            $reqArray = array();
+
+            $reqArray['req_obj'] = json_encode($_REQUEST);
+            $reqArray['res_obj'] = '';
+            $reqArray['custkey'] = Utility::getValue($_REQUEST, 'custkey', date('Ymd_His'));
+            $reqArray['req_number'] = Utility::getValue($_REQUEST, 'req_number');
+            $reqArray['req_source'] = Utility::getValue($_REQUEST, 'req_source', 'Portal1300');
+            $reqArray['req_ddi'] = Utility::getValue($_REQUEST, 'req_ddi', '0284482842');
+            $reqArray['res_status'] = '1'; // pending
+            // $reqArray['created_on']   = date('Y-m-d H:i:s');
+            $reqArray['req_for'] = Utility::getValue($_REQUEST, 'req_for', 'info');
+
+            $mypengoUnsubStatusObj = new MypengoUnsubStatus();
+            return MypengoUnsubStatus::generatePacket($reqArray);
+        } catch (Exception $exc) {
+            if (ENVIRONMENT == 'DEV') {
+                Utility::r($exc->getTraceAsString());
+            }
+        }
+    }
+    
+    
+    /**
+     * is multi array
+     * @param type $arr
+     * @return type
+     */
+    public static function is_multi_array($arr) {
+        rsort($arr);
+        return isset($arr[0]) && is_array($arr[0]);
+    }
+
+
+
 public static function responseObject4Source($keyRequired,$apiResponse) {
 /*  $keyObject      =   array(
     "voice"         => array ("Msisdn","Carrier","SubscriptionStatusDescription"),
