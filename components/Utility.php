@@ -34,7 +34,7 @@ class Utility {
         if (isset($dataArray[$key])) {
             return $dataArray[$key];
         }
-
+//echo $default;
         return $default;
     }
 
@@ -50,7 +50,8 @@ class Utility {
             'Content-Type: application/json',
         );
 
-        $ch = curl_init();
+        $ret   = array();
+        $ch          = curl_init();
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_TIMEOUT, $openSocketTimeout);
@@ -58,10 +59,24 @@ class Utility {
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
 
-        $response = curl_exec($ch);
+        $response['message_packet']    = curl_exec($ch);
+         $response['add_on']   = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        
+/*        switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
+            case 200:  # OK
+            $rr_final     = $response;
+              break;
+              case 400:  # OK
+              $rr_final      = $response;
+              break;
+              case 404:  # OK
+              $rr_final      = "NO RECORD FOUND";
+              break;
+            default:
+             echo 'Unexpected HTTP code: ', $http_code, "\n";
+  }
 
-        curl_close($ch);
-
+  */
         return $response;
     }
 
@@ -106,7 +121,7 @@ class Utility {
      */
     public static function getMsisdn($requestNumber, $countryPrefix) {
         $mobile = trim($requestNumber, " \t\n\r\x0B");
-
+//echo $requestNumber."</br>";
         switch ($countryPrefix) {
             case '65':
                 $suffix = substr($mobile, -8);
