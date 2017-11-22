@@ -38,7 +38,7 @@ class MypengoMapping extends BaseModel {
 
         $conditionsString = implode(" AND ", $conditions);
 
-        $stmt = $this->pdo->prepare("SELECT mm.service_id FROM $this->_table AS mm LEFT JOIN sms_services AS ss  ON mm.sms_service_id=ss.id  WHERE $conditionsString");
+        $stmt = $this->pdo->prepare("SELECT mm.service_id FROM $this->_table AS mm LEFT JOIN sms_services AS ss  ON mm.sms_service_id=ss.id  WHERE $conditionsString ORDER BY ss.id DESC");
 
         $stmt->execute($values);
 

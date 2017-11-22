@@ -10,10 +10,13 @@ class Response {
     private static function getStatus($code) {
         $status = array(
             200 => 'OK',
-            404 => 'Not Found',
+            300 => 'Mapping Not Found',
+            400 => 'Invalid Service ID',
+            404 => 'Subscription Not Found',
             405 => 'Method Not Allowed',
             500 => 'Internal Server Error',
         );
+
         return ($status[$code]) ? $status[$code] : $status[500];
     }
 
@@ -28,4 +31,5 @@ class Response {
         echo json_encode($data);
         exit();
     }
+
 }

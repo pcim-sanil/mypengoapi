@@ -58,7 +58,10 @@ class Utility {
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
 
-        $response = curl_exec($ch);
+        $response = array();
+        $response['httpResponseMessage'] = curl_exec($ch);
+        $response['httpResponseCode'] = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
 
         curl_close($ch);
 
@@ -74,6 +77,7 @@ class Utility {
      * @return type
      */
     public static function apiPostRequest($url, $dataString, $openSocketTimeout = 30, $readTimeout = 30) {
+        
         $headers = array(
             'Content-Type: application/json',
         );
@@ -90,12 +94,25 @@ class Utility {
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
         curl_setopt($ch, CURLOPT_HEADER, 0);
         curl_setopt($ch, CURLINFO_HEADER_OUT, false);
-
-        $response = curl_exec($ch);
+        
+        
+        $response = array();
+        $response['httpResponseMessage'] = curl_exec($ch);
+        $response['httpResponseCode'] = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
         curl_close($ch);
 
         return $response;
+    }
+
+    /**
+     * clean up ddi
+     * @param type $requestDDI
+     * @return type
+     */
+    public static function cleanDDI($requestDDI) {
+        $DDI = trim($requestDDI, " \t\n\r\x0B");
+        return "02" . substr($DDI, -8);
     }
 
     /**
