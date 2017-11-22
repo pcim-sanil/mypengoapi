@@ -70,13 +70,8 @@ abstract class BaseModel
         $stmt->execute(array($id));
         return $stmt->fetch();
     }
-    
-    
-    /**
-     * fetch all by params
-     * @param type $params
-     * @return type
-     */
+
+
     public function fetchAllByParams($params)
     {
 

@@ -30,5 +30,3 @@ define('MODELS_PATH', BASE_PATH . DIRECTORY_SEPARATOR . 'models');
  */
 define('MYPENGO_BASE_URL_UNSUBSCRIBE', 'http://api.mypengo.io/mcm/customercare/unsubscribe');
 define('MYPENGO_BASE_URL_SUBSCRIPTION', 'http://api.mypengo.io/mcm/subscriptioninfo');
-//define('MYPENGO_BASE_URL_SUBSCRIPTION', 'http://192.168.0.20/mypengoapi/localArray.php');
-//define('MYPENGO_BASE_URL_UNSUBSCRIBE', 'http://192.168.0.20/mypengoapi/mypengo_receiver.php');
