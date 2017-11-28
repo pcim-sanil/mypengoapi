@@ -7,7 +7,7 @@ class Response {
      * @param type $code
      * @return type
      */
-    private static function getStatus($code) {
+    public static function getStatus($code) {
         $status = array(
             200 => 'OK',
             300 => 'Mapping Not Found',
@@ -30,6 +30,20 @@ class Response {
         header('Content-type: application/json');
         echo json_encode($data);
         exit();
+    }
+
+    /**
+     * send HTML response
+     * @param type $view
+     */
+    public static function sendHTML($view, $result) {
+        
+        $viewPath = BASE_PATH . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . $view . '.php';
+        if (file_exists($viewPath)) {
+            include $viewPath;
+        } else {
+            exit("$view does not exist.");
+        }
     }
 
 }

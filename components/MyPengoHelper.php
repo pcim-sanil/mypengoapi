@@ -7,7 +7,7 @@ class MyPengoHelper {
      * @param type $reqPacket
      * @return type
      */
-    public static function getSubscriptions($ddi, $mobile, $source = 'Portal1300') {
+    public static function getSubscriptions($ddi, $mobile, $ticketId = NULL, $source = 'Portal1300') {
 
         $DDI = Utility::cleanDDI($ddi);
 
@@ -18,21 +18,22 @@ class MyPengoHelper {
 
         // mapping or mypengo service id not found....
         if (empty($mypengoMappings) || !is_array($mypengoMappings)) {
-            return array('httpResponseMessage' => array(), 'httpResponseCode' => 300);
+            return array('httpResponseMessage' => array(
+                    'httpMypengoResponseCode' => 300,
+                    'httpMypengoResponseMessage' => Response::getStatus(300),
+                ), 'httpResponseCode' => 200);
         }
 
 
         // for every service id query mypengo api
 
-        $localResponse = array();
+        $localResponse = array('httpResponseCode' => '200', 'httpResponseMessage' => array());
 
         foreach ($mypengoMappings as $key => $value) {
 
             $logId = MypengoUnsubStatus::entryLog();
 
             $url = MYPENGO_BASE_URL_SUBSCRIPTION . "?serviceid=" . $value['service_id'] . "&msisdn=" . $mobile;
-            
-            Utility::r($url);
 
             // api call.....
             $rawResponse = Utility::apiGetRequest($url);
@@ -43,18 +44,19 @@ class MyPengoHelper {
             $httpResponseMessage = Utility::getValue($rawResponse, 'httpResponseMessage');
 
 
+
             $temp = array();
-            $temp['httpResponseCode'] = $httpResponseCode;
+            $temp['httpMypengoResponseCode'] = $httpResponseCode;
 
             switch ($httpResponseCode) {
                 case 200:
-                    $temp['httpResponseMessage'] = self::responseObject4Source($source, json_decode($httpResponseMessage, true));
+                    $temp['httpMypengoResponseMessage'] = self::responseObject4Source($source, json_decode($httpResponseMessage, true));
                     break;
                 case 400:
-                    $temp['httpResponseMessage'] = json_decode($httpResponseMessage, true);
+                    $temp['httpMypengoResponseMessage'] = array('message' => json_decode($httpResponseMessage, true));
                     break;
                 case 404:
-                    $temp['httpResponseMessage'] = 'Subscription Not Found';
+                    $temp['httpMypengoResponseMessage'] = array('message' => 'Subscription Not Found');
                     break;
                 default:
                     $temp = $rawResponse;
@@ -62,7 +64,15 @@ class MyPengoHelper {
             }
 
 
-            $localResponse[] = $temp;
+            // embed service id info
+            if (is_array($temp['httpMypengoResponseMessage'])) {
+                $temp['httpMypengoResponseMessage']['mappedServiceId'] = $value['service_id'];
+                $temp['httpMypengoResponseMessage']['ticketId'] = $ticketId;
+            }
+
+
+
+            $localResponse['httpResponseMessage'][] = $temp;
 
             MypengoUnsubStatus::updateLog($logId, $rawResponse);
         }

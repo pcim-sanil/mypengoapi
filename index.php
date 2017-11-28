@@ -56,9 +56,11 @@ $route->register('/getSubscriptions?(.+)', 'GET', function () {
     $requestNumber = Utility::getValue($_REQUEST, 'req_number');
     $msisdn = Utility::getMsisdn($requestNumber, $countryPrefix);
 
-    $result = MyPengoHelper::getSubscriptions($ddi, $msisdn, $source);
+    $ticketId = Utility::getValue($_REQUEST, 'ticket_id', NULL);
 
-    Response::sendJSON($result);
+    $result = MyPengoHelper::getSubscriptions($ddi, $msisdn, $ticketId, $source);
+
+    Response::sendHTML('subscriptions', $result);
 });
 
 
@@ -71,7 +73,6 @@ $route->register('/unsubscribe?(.+)', 'GET', function () {
     $requestNumber = Utility::getValue($_REQUEST, 'req_number');
     $countryPrefix = Utility::getValue($_REQUEST, 'country_prefix');
     $msisdn = Utility::getMsisdn($requestNumber, $countryPrefix);
-
 
     // make entry log
     $logId = MypengoUnsubStatus::entryLog();
@@ -87,7 +88,16 @@ $route->register('/unsubscribe?(.+)', 'GET', function () {
     // update log
     MypengoUnsubStatus::updateLog($logId, $response);
 
-    Response::sendJSON($response);
+
+    $httpResponseMessage = Utility::getValue($response, 'httpResponseMessage');
+
+
+    if ($httpResponseMessage) {
+        $httpMypengoResponseMessage = json_decode($httpResponseMessage, true);
+        exit("<p style='color:red'><b>".Utility::getValue($httpMypengoResponseMessage, 'Message')."</b></p>");
+    }
+
+    exit("OK");
 });
 
 

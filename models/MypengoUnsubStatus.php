@@ -20,7 +20,6 @@ class MypengoUnsubStatus extends BaseModel {
         return $this->_table = "mypengo_unsub_status";
     }
 
-    
     /**
      * get subscriptions from mypengo api
      * @return type
@@ -30,17 +29,18 @@ class MypengoUnsubStatus extends BaseModel {
             $mypengoUnsubStatusObj = new MypengoUnsubStatus();
 
             $reqArray = array();
-
+            
             $reqArray['req_obj'] = json_encode($_REQUEST);
             $reqArray['res_obj'] = '';
+            $reqArray['ticket_id'] = Utility::getValue($_REQUEST, 'ticket_id');
             $reqArray['custkey'] = Utility::getValue($_REQUEST, 'custkey', date('Ymd_His'));
             $reqArray['req_number'] = Utility::getValue($_REQUEST, 'req_number');
             $reqArray['req_source'] = Utility::getValue($_REQUEST, 'req_source', 'Portal1300');
-            $reqArray['req_ddi'] = Utility::getValue($_REQUEST, 'req_ddi', '0284482842');
+            $reqArray['req_ddi'] = Utility::getValue($_REQUEST, 'req_ddi', '');
             $reqArray['res_status'] = '1';
             $reqArray['created_on'] = date('Y-m-d H:i:s');
             $reqArray['req_for'] = Utility::getValue($_REQUEST, 'req_for', 'info');
-            
+
 
             return $mypengoUnsubStatusObj->create($reqArray);
         } catch (Exception $exc) {
@@ -56,6 +56,8 @@ class MypengoUnsubStatus extends BaseModel {
      * @param type $result
      */
     public static function updateLog($id, $response) {
+        
+        return;
         try {
 
             $log = array();
