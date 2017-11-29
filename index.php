@@ -94,7 +94,7 @@ $route->register('/unsubscribe?(.+)', 'GET', function () {
 
     if ($httpResponseMessage) {
         $httpMypengoResponseMessage = json_decode($httpResponseMessage, true);
-        exit("<p style='color:red'><b>".Utility::getValue($httpMypengoResponseMessage, 'Message')."</b></p>");
+        exit("<p style='color:red'><b>" . Utility::getValue($httpMypengoResponseMessage, 'Message') . "</b></p>");
     }
 
     exit("OK");

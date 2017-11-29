@@ -77,7 +77,7 @@ class Utility {
      * @return type
      */
     public static function apiPostRequest($url, $dataString, $openSocketTimeout = 30, $readTimeout = 30) {
-        
+
         $headers = array(
             'Content-Type: application/json',
         );
@@ -94,8 +94,8 @@ class Utility {
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
         curl_setopt($ch, CURLOPT_HEADER, 0);
         curl_setopt($ch, CURLINFO_HEADER_OUT, false);
-        
-        
+
+
         $response = array();
         $response['httpResponseMessage'] = curl_exec($ch);
         $response['httpResponseCode'] = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -149,6 +149,21 @@ class Utility {
             default:
                 return $mobile;
         }
+    }
+
+    /**
+     * round number
+     * @param type $number
+     * @param type $precision
+     * @param type $seperator
+     * @return type
+     */
+    public static function round($number = 0, $precision = 2, $seperator = '') {
+        if (is_numeric($number)) {
+            return number_format((float) $number, $precision, '.', $seperator);
+        }
+
+        return $number;
     }
 
 }

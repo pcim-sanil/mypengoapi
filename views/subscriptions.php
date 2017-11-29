@@ -1,4 +1,10 @@
 <?php
+// fetch currency
+$countryPrefix = Utility::getValue($_REQUEST, 'country_prefix');
+$countries = new Countries();
+$currency = $countries->getCurrency($countryPrefix);
+
+
 $responseCode = Utility::getValue($result, 'httpResponseCode');
 $myPengoResponses = Utility::getValue($result, 'httpResponseMessage', array());
 
@@ -18,7 +24,6 @@ foreach ($myPengoResponses as $response) {
 
 
 //Utility::r($result);
-
 // subscription data...
 if (count($responseGroupedByCode[200])) {
     ?>
@@ -34,9 +39,9 @@ if (count($responseGroupedByCode[200])) {
                     <th style="text-align: center;">Activated</th>
                     <th style="text-align: center;">Unsubscribed</th>
                     <th style="text-align: center;">Last Bill</th>
-                    <th style="text-align: center;">Total Billed</th>
+                    <th style="text-align: center;">Total Billed Amount</th>
                     <th style="text-align: center;">Subscription Status</th>
-                    <th style="text-align: center;">Action</th>
+                    <th style="text-align: center;"></th>
                 </tr>
                 <?php
                 foreach ($responseGroupedByCode[200] as $subscription) {
@@ -47,6 +52,7 @@ if (count($responseGroupedByCode[200])) {
                     $msisdn = Utility::getValue($subscription, 'Msisdn');
                     $serviceId = Utility::getValue($subscription, 'mappedServiceId');
                     $subscriptionStatusDescription = Utility::getValue($subscription, 'SubscriptionStatusDescription');
+                    $totalBilledAmount = Utility::getValue($subscription, 'TotalBilledAmount');
                     $ticketId = Utility::getValue($subscription, 'ticketId');
                     $id = 'btn-' . uniqid();
                     ?>
@@ -55,10 +61,10 @@ if (count($responseGroupedByCode[200])) {
                         <td style="text-align: center;"><?php echo $activationDate; ?></td>
                         <td style="text-align: center;"><?php echo $unsubscriptionDate; ?></td>
                         <td style="text-align: center;"><?php echo $lastSuccessfulBillingAttempt; ?></td>
-                        <td style="text-align: center;"><?php echo Utility::getValue($subscription, 'TotalBilledAmount'); ?></td>
+                        <td style="text-align: center;"><?php echo $currency . ' ' . Utility::round($totalBilledAmount); ?></td>
                         <td style="text-align: center;"><b><?php echo $subscriptionStatusDescription; ?></b></td>
                         <th style="text-align: center;" id="<?php echo $id; ?>">
-                            <?php if (trim($subscriptionStatusDescription)=='Active') { ?>
+                            <?php if (trim($subscriptionStatusDescription) == 'Active') { ?>
                                 <button class="mini button" onclick="mypengo_unsub_via_api('<?php echo $serviceId; ?>', '<?php echo $id; ?>')">Unsubscribe</button>
                             <?php } ?>
                         </th>
