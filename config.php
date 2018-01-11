@@ -13,7 +13,7 @@ define('ENVIRONMENT', 'DEV');
 define('DB_HOST', '192.168.0.120');
 define('DB_USER', 'developer');
 define('DB_PASSWORD', 'abc123');
-define('DB_NAME', '1300');
+define('DB_NAME', '1300_staging');
 define('DB_CHARSET', 'utf8');
 
 
@@ -30,3 +30,6 @@ define('MODELS_PATH', BASE_PATH . DIRECTORY_SEPARATOR . 'models');
  */
 define('MYPENGO_BASE_URL_UNSUBSCRIBE', 'http://api.mypengo.io/mcm/customercare/unsubscribe');
 define('MYPENGO_BASE_URL_SUBSCRIPTION', 'http://api.mypengo.io/mcm/subscriptioninfo');
+define('MYPENGO_BASE_URL_ODDESSEY_UNSUBSCRIBE', 'http://reporting.oddesseybizz.nl/getreportingdata/subscription_info.php?action=unsubscribe');
+define('MYPENGO_BASE_URL_ODDESSEY_SUBSCRIPTION', 'http://reporting.oddesseybizz.nl/getreportingdata/subscription_info.php');
+define('MYPENGO_BASE_URL_ODDESSEY_SUBSCRIPTION_T', 'http://localhost/pcimWork/mypengo/mypengo_oddy_test.php');

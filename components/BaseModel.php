@@ -147,9 +147,10 @@ abstract class BaseModel
             $sql .= ' ' . $name . ' = :' . $name . ',';
             $values[':' . $name] = $value;
         }
+
         $sql = substr($sql, 0, -1); // remove last ,
         $sql .= ' WHERE id = :id ;';
-
+      
         return $this->pdo->prepare($sql)->execute($values);
     }
 
