@@ -68,6 +68,38 @@ class Utility {
         return $response;
     }
 
+
+    /**
+     * curl get request
+     * @param type $url
+     * @param type $openSocketTimeout
+     * @param type $readTimeout
+     * @return type
+     */
+    public static function apiGetRequestOdy($url, $openSocketTimeout = 30, $readTimeout = 30) {
+        $headers = array(
+            'Content-Type: application/json',
+        );
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_TIMEOUT, $openSocketTimeout);
+        curl_setopt($ch, CURLOPT_USERPWD, "pcim_api:pcim!39bf45hL");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+
+        $response = array();
+        $response['httpResponseMessage'] = curl_exec($ch);
+        $response['httpResponseCode'] = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+
+        curl_close($ch);
+
+        return $response;
+    }
+
     /**
      * curl post request
      * @param type $url
