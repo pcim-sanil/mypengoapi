@@ -36,6 +36,7 @@ if (count($responseGroupedByCode[200])) {
             <table class="table table-striped table-bordered">
                 <tr>
                     <th>Service Name</th>
+                    <th style="text-align: center;">Caretool</th>
                     <th style="text-align: center;">Activated</th>
                     <th style="text-align: center;">Unsubscribed</th>
                     <th style="text-align: center;">Last Bill</th>
@@ -58,6 +59,7 @@ if (count($responseGroupedByCode[200])) {
                     ?>
                     <tr>
                         <td><b><?php echo Utility::getValue($subscription, 'ServiceName'); ?></b></td>
+                        <td style="text-align: center;"><?php echo Utility::getValue($subscription, 'caretool', ''); ?></td>
                         <td style="text-align: center;"><?php echo $activationDate; ?></td>
                         <td style="text-align: center;"><?php echo $unsubscriptionDate; ?></td>
                         <td style="text-align: center;"><?php echo $lastSuccessfulBillingAttempt; ?></td>
