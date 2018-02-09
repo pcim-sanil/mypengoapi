@@ -9,6 +9,7 @@ class MyPengoHelper {
      */
     public static function getSubscriptions($ddi, $mobile, $ticketId = null, $source = 'Portal1300') {
 
+
         $DDI = Utility::cleanDDI($ddi);
 
 
@@ -20,6 +21,7 @@ class MyPengoHelper {
 
         // fetch mypengo mappings
         $mypengoMappings = $mypengoMappingObj->fetchServiceID(['geographic_no' => $DDI, 'is_ddi_active' => 1]);
+
 
         // mapping or mypengo service id not found....
         if (empty($localwithOddy) && (empty($mypengoMappings) || !is_array($mypengoMappings))) {
@@ -44,19 +46,41 @@ class MyPengoHelper {
             // api call.....
             $rawResponse = Utility::apiGetRequest($url);
 
+
+
+
             $httpResponseCode = Utility::getValue($rawResponse, 'httpResponseCode');
             // response from mypengo api
             $httpResponseMessage = Utility::getValue($rawResponse, 'httpResponseMessage');
+
+
+            // convert into array...
+            $httpResponseMessage = json_decode($httpResponseMessage, true);
+
+
+            // add extra information....
+            if (is_array($httpResponseMessage)) {
+                foreach ($httpResponseMessage as $k => $v) {
+                    if (is_array($v)) {
+                        $httpResponseMessage[$k]['mappedServiceId'] = $value['service_id'];
+                        $httpResponseMessage[$k]['ticketId'] = $ticketId;
+                        $httpResponseMessage[$k]['caretool'] = "kenny";
+                    }
+                }
+            }
+
+
+
 
             $temp = array();
             $temp['httpMypengoResponseCode'] = $httpResponseCode;
 
             switch ($httpResponseCode) {
                 case 200:
-                    $temp['httpMypengoResponseMessage'] = self::responseObject4Source($source, json_decode($httpResponseMessage, true));
+                    $temp['httpMypengoResponseMessage'] = $httpResponseMessage;
                     break;
                 case 400:
-                    $temp['httpMypengoResponseMessage'] = array('message' => json_decode($httpResponseMessage, true));
+                    $temp['httpMypengoResponseMessage'] = array('message' => $httpResponseMessage);
                     break;
                 case 404:
                     $temp['httpMypengoResponseMessage'] = array('message' => 'Subscription Not Found');
@@ -66,12 +90,6 @@ class MyPengoHelper {
                     break;
             }
 
-            // embed service id info
-            if (is_array($temp['httpMypengoResponseMessage'])) {
-                $temp['httpMypengoResponseMessage']['mappedServiceId'] = $value['service_id'];
-                $temp['httpMypengoResponseMessage']['ticketId'] = $ticketId;
-                $temp['httpMypengoResponseMessage']['caretool'] = "kenny";
-            }
 
             $localResponse['httpResponseMessage'][] = $temp;
 
@@ -79,9 +97,9 @@ class MyPengoHelper {
         }
 
 
-
         // combine kenney with odssey
         $localResponse['httpResponseMessage'] = array_merge($localResponse['httpResponseMessage'], $localwithOddy);
+
 
         return $localResponse;
     }
@@ -152,8 +170,14 @@ class MyPengoHelper {
         $url1 = MYPENGO_BASE_URL_ODDESSEY_SUBSCRIPTION . "?msisdn=" . $mobile;
         $rawResponse = Utility::apiGetRequestOdy($url1);
 
+
+
+
         $httpResponseCode = Utility::getValue($rawResponse, 'httpResponseCode');
         $httpResponseMessage = Utility::getValue($rawResponse, 'httpResponseMessage');
+
+
+
 
 
         $filterKeys = array();
@@ -174,13 +198,20 @@ class MyPengoHelper {
         $response4API = json_decode($httpResponseMessage, true);
 
 
+        $temp = array();
+
         $oddseyResponse = array();
+
 
         if (!empty($response4API)) {
 
-            foreach ($response4API as $elementKey => $elementVal) {
+            $temp['httpMypengoResponseCode'] = $httpResponseCode;
 
-                $temp['httpMypengoResponseCode'] = $httpResponseCode;
+
+            // subs
+            $newArray = array();
+
+            foreach ($response4API as $elementKey => $elementVal) {
 
                 foreach ($elementVal as $kk => $vv) {
 
@@ -195,14 +226,15 @@ class MyPengoHelper {
                 $newArray['mappedServiceId'] = Utility::getValue($elementVal, 'id');
                 $newArray['ticketId'] = "";
                 $newArray['caretool'] = "Oddsey";
-
-                $temp['httpMypengoResponseMessage'] = $newArray;
             }
 
 
-            if (isset($temp['httpMypengoResponseMessage']['TotalBilledAmount']) && $temp['httpMypengoResponseMessage']['TotalBilledAmount'] > 0) {
-                $oddseyResponse[] = $temp;
-            }
+
+            $temp['httpMypengoResponseMessage'] = array($newArray);
+
+
+
+            $oddseyResponse[] = $temp;
         }
 
         return $oddseyResponse;

@@ -23,7 +23,6 @@ foreach ($myPengoResponses as $response) {
 }
 
 
-//Utility::r($result);
 // subscription data...
 if (count($responseGroupedByCode[200])) {
     ?>
@@ -45,33 +44,46 @@ if (count($responseGroupedByCode[200])) {
                     <th style="text-align: center;"></th>
                 </tr>
                 <?php
-                foreach ($responseGroupedByCode[200] as $subscription) {
+                foreach ($responseGroupedByCode[200] as $subscriptions) {
+                    
+                    foreach ($subscriptions as $subscription) {
 
-                    $activationDate = current(explode('T', Utility::getValue($subscription, 'ActivationDate')));
-                    $unsubscriptionDate = current(explode('T', Utility::getValue($subscription, 'UnsubscriptionDate')));
-                    $lastSuccessfulBillingAttempt = current(explode('T', Utility::getValue($subscription, 'LastSuccessfulBillingAttempt')));
-                    $msisdn = Utility::getValue($subscription, 'Msisdn');
-                    $serviceId = Utility::getValue($subscription, 'mappedServiceId');
-                    $subscriptionStatusDescription = Utility::getValue($subscription, 'SubscriptionStatusDescription');
-                    $totalBilledAmount = Utility::getValue($subscription, 'TotalBilledAmount');
-                    $ticketId = Utility::getValue($subscription, 'ticketId');
-                    $id = 'btn-' . uniqid();
-                    ?>
-                    <tr>
-                        <td><b><?php echo Utility::getValue($subscription, 'ServiceName'); ?></b></td>
-                        <td style="text-align: center;"><?php echo Utility::getValue($subscription, 'caretool', ''); ?></td>
-                        <td style="text-align: center;"><?php echo $activationDate; ?></td>
-                        <td style="text-align: center;"><?php echo $unsubscriptionDate; ?></td>
-                        <td style="text-align: center;"><?php echo $lastSuccessfulBillingAttempt; ?></td>
-                        <td style="text-align: center;"><?php echo $currency . ' ' . Utility::round($totalBilledAmount); ?></td>
-                        <td style="text-align: center;"><b><?php echo $subscriptionStatusDescription; ?></b></td>
-                        <th style="text-align: center;" id="<?php echo $id; ?>">
-                            <?php if (trim($subscriptionStatusDescription) == 'Active') { ?>
-                                <button class="mini button" onclick="mypengo_unsub_via_api('<?php echo $serviceId; ?>', '<?php echo $id; ?>')">Unsubscribe</button>
-                            <?php } ?>
-                        </th>
-                    </tr>
-                    <?php
+                        $activationDate = current(explode('T', Utility::getValue($subscription, 'ActivationDate')));
+                        $unsubscriptionDate = current(explode('T', Utility::getValue($subscription, 'UnsubscriptionDate')));
+                        $lastSuccessfulBillingAttempt = current(explode('T', Utility::getValue($subscription, 'LastSuccessfulBillingAttempt')));
+                        $msisdn = Utility::getValue($subscription, 'Msisdn');
+                        $serviceId = Utility::getValue($subscription, 'mappedServiceId');
+                        $subscriptionStatusDescription = Utility::getValue($subscription, 'SubscriptionStatusDescription');
+                        $totalBilledAmount = Utility::getValue($subscription, 'TotalBilledAmount');
+                        $ticketId = Utility::getValue($subscription, 'ticketId');
+                        $id = 'btn-' . uniqid();
+
+                        $caretool = Utility::getValue($subscription, 'caretool');
+                        ?>
+                        <tr>
+                            <td><b><?php echo Utility::getValue($subscription, 'ServiceName'); ?></b></td>
+                            <td style="text-align: center;"><?php echo Utility::getValue($subscription, 'caretool', ''); ?></td>
+                            <td style="text-align: center;"><?php echo $activationDate; ?></td>
+                            <td style="text-align: center;"><?php echo $unsubscriptionDate; ?></td>
+                            <td style="text-align: center;"><?php echo $lastSuccessfulBillingAttempt; ?></td>
+                            <td style="text-align: center;"><?php echo $currency . ' ' . Utility::round($totalBilledAmount); ?></td>
+                            <td style="text-align: center;"><b><?php echo $subscriptionStatusDescription; ?></b></td>
+                            <th style="text-align: center;" id="<?php echo $id; ?>">
+                                <?php
+                                if ($caretool == "Oddsey" && trim($subscriptionStatusDescription) == 'Y') {
+                                    ?>
+                                    <button class="mini button" onclick="mypengo_unsub_via_api_oddessy('<?php echo $id; ?>')">Unsubscribe</button>
+                                    <?php
+                                } else if ($caretool == "kenny" && trim($subscriptionStatusDescription) == 'Active') {
+                                    ?>
+                                    <button class="mini button" onclick="mypengo_unsub_via_api('<?php echo $serviceId; ?>', '<?php echo $id; ?>')">Unsubscribe</button>
+                                    <?php
+                                }
+                                ?>
+                            </th>
+                        </tr>
+                        <?php
+                    }
                 }
                 ?>
             </table>

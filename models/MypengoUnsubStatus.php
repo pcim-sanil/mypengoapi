@@ -24,14 +24,14 @@ class MypengoUnsubStatus extends BaseModel {
      * get subscriptions from mypengo api
      * @return type
      */
-    public static function entryLog() {
+    public static function entryLog($url = "") {
         try {
             $mypengoUnsubStatusObj = new MypengoUnsubStatus();
 
             $reqArray = array();
             
             $reqArray['req_obj'] = json_encode($_REQUEST);
-            $reqArray['res_obj'] = '';
+            $reqArray['res_obj'] = $url;
             $reqArray['ticket_id'] = Utility::getValue($_REQUEST, 'ticket_id');
             $reqArray['custkey'] = Utility::getValue($_REQUEST, 'custkey', date('Ymd_His'));
             $reqArray['req_number'] = Utility::getValue($_REQUEST, 'req_number');

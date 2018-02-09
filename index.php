@@ -49,7 +49,7 @@ $route->register('/getServiceId/(\d+)', 'GET', function ($ddi) {
 
 // fetch subscription
 $route->register('/getSubscriptions?(.+)', 'GET', function () {
-
+    
     $ddi = Utility::getValue($_REQUEST, 'req_ddi', '0284482842');
     $source = Utility::getValue($_REQUEST, 'req_source', 'Portal1300');
     $countryPrefix = Utility::getValue($_REQUEST, 'country_prefix');
@@ -59,6 +59,8 @@ $route->register('/getSubscriptions?(.+)', 'GET', function () {
     $ticketId = Utility::getValue($_REQUEST, 'ticket_id', NULL);
 
     $result = MyPengoHelper::getSubscriptions($ddi, $msisdn, $ticketId, $source);
+    
+    
 
     Response::sendHTML('subscriptions', $result);
 });
@@ -87,6 +89,47 @@ $route->register('/unsubscribe?(.+)', 'GET', function () {
 
     // update log
     MypengoUnsubStatus::updateLog($logId, $response);
+
+
+    $httpResponseMessage = Utility::getValue($response, 'httpResponseMessage');
+
+
+    if ($httpResponseMessage) {
+        $httpMypengoResponseMessage = json_decode($httpResponseMessage, true);
+        exit("<p style='color:red'><b>" . Utility::getValue($httpMypengoResponseMessage, 'Message') . "</b></p>");
+    }
+
+    exit("OK");
+});
+
+
+
+// unsubscrib from service
+$route->register('/oddesseyUnsubscribe?(.+)', 'GET', function () {
+
+    // set req_for as unsub
+    $_REQUEST['req_for'] = 'unsub';
+
+    $requestNumber = Utility::getValue($_REQUEST, 'req_number');
+    $countryPrefix = Utility::getValue($_REQUEST, 'country_prefix');
+    $msisdn = Utility::getMsisdn($requestNumber, $countryPrefix);
+
+   
+    
+     // mypengo actual api call
+    $url = MYPENGO_BASE_URL_ODDESSEY_UNSUBSCRIBE."&msisdn=".$msisdn;
+    
+    // make entry log
+    $logId = MypengoUnsubStatus::entryLog();
+
+
+   
+    
+    $response = Utility::apiGetRequestOdy($url, '');
+
+
+    // update log
+   // MypengoUnsubStatus::updateLog($logId, $response);
 
 
     $httpResponseMessage = Utility::getValue($response, 'httpResponseMessage');
