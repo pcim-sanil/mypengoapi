@@ -13,7 +13,7 @@ define('ENVIRONMENT', 'DEV');
 define('DB_HOST', '192.168.0.120');
 define('DB_USER', 'developer');
 define('DB_PASSWORD', 'abc123');
-define('DB_NAME', '1300_staging');
+define('DB_NAME', '1300');
 define('DB_CHARSET', 'utf8');
 
 
