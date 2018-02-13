@@ -169,6 +169,7 @@ class MyPengoHelper {
 
         $url1 = MYPENGO_BASE_URL_ODDESSEY_SUBSCRIPTION . "?msisdn=" . $mobile;
         $rawResponse = Utility::apiGetRequestOdy($url1);
+        
 
 
 
@@ -177,6 +178,8 @@ class MyPengoHelper {
         $httpResponseMessage = Utility::getValue($rawResponse, 'httpResponseMessage');
 
 
+
+        
 
 
 
@@ -196,7 +199,7 @@ class MyPengoHelper {
         );
 
         $response4API = json_decode($httpResponseMessage, true);
-
+        
 
         $temp = array();
 
@@ -226,11 +229,13 @@ class MyPengoHelper {
                 $newArray['mappedServiceId'] = Utility::getValue($elementVal, 'id');
                 $newArray['ticketId'] = "";
                 $newArray['caretool'] = "Oddsey";
+                
+                 $temp['httpMypengoResponseMessage'][] = $newArray;
             }
 
 
 
-            $temp['httpMypengoResponseMessage'] = array($newArray);
+           
 
 
 
