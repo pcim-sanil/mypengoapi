@@ -68,7 +68,7 @@ if (count($responseGroupedByCode[200])) {
                             <td style="text-align: center;"><?php echo $lastSuccessfulBillingAttempt; ?></td>
                             <td style="text-align: center;"><?php echo $currency . ' ' . Utility::round($totalBilledAmount); ?></td>
                             <td style="text-align: center;"><b><?php echo $subscriptionStatusDescription; ?></b></td>
-                            <th style="text-align: center;" id="<?php echo $id; ?>">
+                            <th style="text-align: center;" id="<?php echo $id; ?>" class="unsubscribe-btns">
                                 <?php
                                 if ($caretool == "Oddsey" && trim($subscriptionStatusDescription) == 'Y') {
                                     ?>
@@ -117,7 +117,6 @@ if (count($responseGroupedByCode[404])) {
 
 //Invalid Service ID
 if (count($responseGroupedByCode[400])) {
-    Utility::r($responseGroupedByCode[400]);
+   // Utility::r($responseGroupedByCode[400]);
     return;
 }
-?>
