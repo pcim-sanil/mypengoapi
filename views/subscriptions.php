@@ -58,6 +58,11 @@ if (count($responseGroupedByCode[200])) {
                         $ticketId = Utility::getValue($subscription, 'ticketId');
                         $id = 'btn-' . uniqid();
 
+
+		        if(!$activationDate && !$unsubscriptionDate){
+				continue;
+			}
+
                         $caretool = Utility::getValue($subscription, 'caretool');
                         ?>
                         <tr>

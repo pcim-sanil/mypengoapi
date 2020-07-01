@@ -57,13 +57,21 @@ $route->register('/getSubscriptions?(.+)', 'GET', function () {
     $msisdn = Utility::getMsisdn($requestNumber, $countryPrefix);
 
     $ticketId = Utility::getValue($_REQUEST, 'ticket_id', NULL);
+    
+    $responseType = Utility::getValue($_REQUEST, 'response_type', 'HTML');
 
     $result = MyPengoHelper::getSubscriptions($ddi, $msisdn, $ticketId, $source);
     
-    
+    if($responseType=='JSON'){
+    	exit($result);
+    } else {
+    	Response::sendHTML('subscriptions', $result);
+    }
 
-    Response::sendHTML('subscriptions', $result);
+    
 });
+
+//(http://localhost/mypengoapi/getSubscriptions?custkey=1535421038.5986&req_number=61429956053&country_prefix=61&serviceId=204&req_ddi=0284482841&ticket_id=1741686&response_type=JSON)
 
 
 // unsubscrib from service
