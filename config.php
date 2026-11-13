@@ -10,7 +10,7 @@ define('ENVIRONMENT', 'DEV');
  * Database configuration
  * adjust params based on enviornment
  */
-define('DB_HOST', '192.168.0.120');
+define('DB_HOST', '172.31.52.213');
 define('DB_USER', 'developer');
 define('DB_PASSWORD', 'abc123');
 define('DB_NAME', '1300');
